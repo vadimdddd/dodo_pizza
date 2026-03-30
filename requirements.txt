@@ -1,0 +1,5 @@
+opencv-python
+pandas==3.0.1
+ultralytics==8.4.28
+numpy==1.26.4
+wget==3.2
