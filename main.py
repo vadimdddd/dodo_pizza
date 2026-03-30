@@ -8,7 +8,7 @@ import tkinter as tk
 from ultralytics import YOLO
 from collections import deque
 
-# --- 1. НАСТРОЙКИ И КОНСТАНТЫ ---
+# 1. НАСТРОЙКИ И КОНСТАНТЫ
 STATE_GREEN = 'green'   # Стол пустой (людей в зоне нет)
 STATE_YELLOW = 'yellow' # Подход к столу (переходное состояние)
 STATE_RED = 'red'       # Стол занят (есть человек в зоне)
@@ -79,7 +79,7 @@ def get_scaled_frame(frame, target_width, target_height):
 def main(video_path):
     window_name = os.path.splitext(os.path.basename(video_path))[0]
 
-    # --- 2. ПЕРЕМЕННЫЕ ДЛЯ АНАЛИТИКИ ---
+    # 2. ПЕРЕМЕННЫЕ ДЛЯ АНАЛИТИКИ
     analytics = {
         'total_empty_time': 0.0,
         'total_occupied_time': 0.0,
@@ -92,7 +92,7 @@ def main(video_path):
         'pending_empty_time': 0.0,
     }
 
-    # --- 3. ИНИЦИАЛИЗАЦИЯ ВИДЕО И МОДЕЛИ ---
+    # 3. ИНИЦИАЛИЗАЦИЯ ВИДЕО И МОДЕЛИ
     screen_width, screen_height = 1920, 1080 
     
     model = YOLO('yolo26n.pt')
@@ -166,8 +166,8 @@ def main(video_path):
 
         results = model(frame_original, classes=[0], conf=0.3)
         
-        # --- ОПРЕДЕЛЕНИЕ ФАКТИЧЕСКОГО СОСТОЯНИЯ ПО ПЕРЕСЕЧЕНИЮ ---
-        current_frame_state_by_intersection = STATE_GREEN # по умолчанию пусто
+        # ОПРЕДЕЛЕНИЕ ФАКТИЧЕСКОГО СОСТОЯНИЯ ПО ПЕРЕСЕЧЕНИЮ
+        current_frame_state_by_intersection = STATE_GREEN # по умолчанию пустой стол
 
         rx_o, ry_o, rw_o, rh_o = roi_original
 
@@ -205,7 +205,7 @@ def main(video_path):
             else: 
                 current_frame_state_by_intersection = STATE_YELLOW # переходное
 
-        # --- ВИЗУАЛЬНОЕ СОСТОЯНИЕ (по буферу) ---
+        # ВИЗУАЛЬНОЕ СОСТОЯНИЕ (по буферу)
         state_buffer.append(current_frame_state_by_intersection)
         
         count_green = list(state_buffer).count(STATE_GREEN)
@@ -220,7 +220,7 @@ def main(video_path):
         
         final_color_state_for_drawing = max(dominant_state_counts, key=dominant_state_counts.get)
         
-        # --- НОВАЯ ЛОГИКА: УЧЁТ ВРЕМЕНИ ДО СМЕНЫ ЦВЕТА РАМКИ ---
+        # УЧЁТ ВРЕМЕНИ ДО СМЕНЫ ЦВЕТА РАМКИ
         current_time_sec = frame_idx / fps
 
         # Если фактическое состояние — "занят", а визуальное ещё нет — накапливаем время в pending_occupied_time
@@ -309,7 +309,7 @@ def main(video_path):
 
     current_time_sec = total_video_time_sec
 
-    # Финальное закрытие таймеров и добавление "висящего" времени из pending_
+    # Финальное закрытие таймеров и добавление "висящего" времени из pending
     
     # Если видео закончилось на "занято"
     if analytics['table_state'] == STATE_RED and analytics['occupied_start_time'] is not None:
